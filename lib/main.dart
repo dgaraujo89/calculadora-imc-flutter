@@ -17,11 +17,17 @@ class _HomeState extends State<Home> {
 
   TextEditingController _weightController = TextEditingController();
   TextEditingController _heightController = TextEditingController();
+  
   String _infoText = MESSAGE_INFO_TEXT;
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _resetFields() {
     _weightController.text = "";
     _heightController.text = "";
+
+    _formKey.currentState.reset();
+
     setState(() {
       _infoText = MESSAGE_INFO_TEXT;
     });
@@ -68,49 +74,62 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Icon(
-              Icons.person_outline,
-              size: 120.0,
-              color: Colors.green,
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Peso (kg)",
-                labelStyle: TextStyle(color: Colors.green)
-              ),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.green, fontSize: 25.0),
-              controller: _weightController,
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Altura (cm)",
-                labelStyle: TextStyle(color: Colors.green)
-              ),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.green, fontSize: 25.0),
-              controller: _heightController,
-            ),
-            Container(
-              height: 50,
-              margin: EdgeInsets.only(top: 20.0, bottom: 20.0),
-              child: RaisedButton(
-                onPressed: _calculate,
-                child: Text("Calcular", style: TextStyle(color: Colors.white, fontSize: 25.0),),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Icon(
+                Icons.person_outline,
+                size: 120.0,
                 color: Colors.green,
               ),
-            ),
-            Text(
-              _infoText,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.green, fontSize: 25),
-            ),
-          ],
+              TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Peso (kg)",
+                  labelStyle: TextStyle(color: Colors.green)
+                ),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.green, fontSize: 25.0),
+                controller: _weightController,
+                validator: (value) {
+                  return value.isEmpty ? "Insira o seu peso" : null;
+                },
+              ),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Altura (cm)",
+                  labelStyle: TextStyle(color: Colors.green)
+                ),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.green, fontSize: 25.0),
+                controller: _heightController,
+                validator: (value) {
+                  return value.isEmpty ? "Insira a sua altura" : null;
+                },
+              ),
+              Container(
+                height: 50,
+                margin: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                child: RaisedButton(
+                  onPressed: () {
+                    if(_formKey.currentState.validate()) {
+                      _calculate();
+                    }
+                  },
+                  child: Text("Calcular", style: TextStyle(color: Colors.white, fontSize: 25.0),),
+                  color: Colors.green,
+                ),
+              ),
+              Text(
+                _infoText,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.green, fontSize: 25),
+              ),
+            ],
+          ),
         ),
       ),
     );
